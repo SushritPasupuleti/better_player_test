@@ -1,5 +1,9 @@
+import 'dart:io';
+
 import 'package:better_player/better_player.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:path_provider/path_provider.dart';
 
 void main() {
   runApp(MyApp());
@@ -52,18 +56,6 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  BetterPlayerController _betterPlayerController;
-
-  @override
-  void initState() {
-    super.initState();
-    BetterPlayerDataSource betterPlayerDataSource = BetterPlayerDataSource(
-        BetterPlayerDataSourceType.NETWORK,
-        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4");
-    _betterPlayerController = BetterPlayerController(
-        BetterPlayerConfiguration(),
-        betterPlayerDataSource: betterPlayerDataSource);
-  }
 
   void _incrementCounter() {
     setState(() {
@@ -127,4 +119,12 @@ class _MyHomePageState extends State<MyHomePage> {
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
+
+  Future _saveAssetVideoToFile() async {
+    var content = await rootBundle.load("assets/Zawarudo.mp4");
+    final directory = await getApplicationDocumentsDirectory();
+    var file = File("${directory.path}/Zawarudo.mp4");
+    file.writeAsBytesSync(content.buffer.asUint8List());
+  }
+  
 }
