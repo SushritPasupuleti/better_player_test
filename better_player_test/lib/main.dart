@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:better_player/better_player.dart';
@@ -56,6 +57,10 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
+  BetterPlayerController _betterPlayerController;
+  StreamController<bool> _fileVideoStreamController =
+      StreamController.broadcast();
+  bool _fileVideoShown = true;
 
   void _incrementCounter() {
     setState(() {
@@ -68,63 +73,84 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  @override
-  Widget build(BuildContext context) {
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
-    // The Flutter framework has been optimized to make rerunning build methods
-    // fast, so that you can just rebuild anything that needs updating rather
-    // than having to individually change instances of widgets.
-    return Scaffold(
-      appBar: AppBar(
-        // Here we take the value from the MyHomePage object that was created by
-        // the App.build method, and use it to set our appbar title.
-        title: Text(widget.title),
-      ),
-      body: Center(
-        // Center is a layout widget. It takes a single child and positions it
-        // in the middle of the parent.
-        child: Column(
-          // Column is also a layout widget. It takes a list of children and
-          // arranges them vertically. By default, it sizes itself to fit its
-          // children horizontally, and tries to be as tall as its parent.
-          //
-          // Invoke "debug painting" (press "p" in the console, choose the
-          // "Toggle Debug Paint" action from the Flutter Inspector in Android
-          // Studio, or the "Toggle Debug Paint" command in Visual Studio Code)
-          // to see the wireframe for each widget.
-          //
-          // Column has various properties to control how it sizes itself and
-          // how it positions its children. Here we use mainAxisAlignment to
-          // center the children vertically; the main axis here is the vertical
-          // axis because Columns are vertical (the cross axis would be
-          // horizontal).
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Text(
-              'You have pushed the button this many times:',
-            ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
-          ],
-        ),
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
+  Future<BetterPlayerController> _setupFileVideoData() async {
+    await _saveAssetVideoToFile();
+    final directory = await getApplicationDocumentsDirectory();
+
+    var dataSource = BetterPlayerDataSource(
+      BetterPlayerDataSourceType.FILE,
+      "${directory.path}/zawarudo.mp4",
     );
+    _betterPlayerController = BetterPlayerController(
+      BetterPlayerConfiguration(),
+      betterPlayerDataSource: dataSource,
+    );
+
+    return _betterPlayerController;
   }
 
   Future _saveAssetVideoToFile() async {
-    var content = await rootBundle.load("assets/Zawarudo.mp4");
+    var content = await rootBundle.load("assets/zawarudo.mp4");
     final directory = await getApplicationDocumentsDirectory();
-    var file = File("${directory.path}/Zawarudo.mp4");
+    var file = File("${directory.path}/zawarudo.mp4");
     file.writeAsBytesSync(content.buffer.asUint8List());
   }
-  
+
+  @override
+  Widget build(BuildContext context) {
+    return ListView(children: [
+      // Padding(
+      //   padding: EdgeInsets.all(8),
+      //   child: Text("This is example default video. This video is loaded from"
+      //       " URL. Subtitles are loaded from file."),
+      // ),
+      _buildFileVideo()
+    ]);
+  }
+
+  Widget _buildShowFileVideoButton() {
+    return Column(children: [
+      RaisedButton(
+        child: Text("Show video from file"),
+        onPressed: () {
+          _fileVideoShown = !_fileVideoShown;
+          _fileVideoStreamController.add(_fileVideoShown);
+        },
+      ),
+      _buildFileVideo()
+    ]);
+  }
+
+  Widget _buildFileVideo() {
+    return StreamBuilder<bool>(
+      stream: _fileVideoStreamController.stream,
+      builder: (context, snapshot) {
+        if (snapshot?.data == true) {
+          return FutureBuilder<BetterPlayerController>(
+            future: _setupFileVideoData(),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return Center(child: CircularProgressIndicator());
+              } else {
+                return AspectRatio(
+                  aspectRatio: 16 / 9,
+                  child: BetterPlayer(
+                    controller: snapshot.data,
+                  ),
+                );
+              }
+            },
+          );
+        } else {
+          return const SizedBox();
+        }
+      },
+    );
+  }
+
+  @override
+  void dispose() {
+    _fileVideoStreamController.close();
+    super.dispose();
+  }
 }
