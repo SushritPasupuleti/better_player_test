@@ -56,20 +56,20 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  int _counter = 3;
   BetterPlayerController _betterPlayerController;
   StreamController<bool> _fileVideoStreamController =
       StreamController.broadcast();
   bool _fileVideoShown = true;
 
-  void _incrementCounter() {
+  void _decrementCounter() {
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below
       // so that the display can reflect the updated values. If we changed
       // _counter without calling setState(), then the build method would not be
       // called again, and so nothing would appear to happen.
-      _counter++;
+      _counter--;
     });
   }
 
@@ -81,23 +81,37 @@ class _MyHomePageState extends State<MyHomePage> {
       BetterPlayerDataSourceType.FILE,
       "${directory.path}/zawarudo.mp4",
     );
+
     _betterPlayerController = BetterPlayerController(
       BetterPlayerConfiguration(
-          overlay: Scaffold(
-        appBar: AppBar(
-          title: new Text("Video Title"),
-          elevation: 0.0,
-          backgroundColor: const Color(0x00000000).withOpacity(0.5),
+        overlay: Scaffold(
+          appBar: AppBar(
+            title: new Text("Video Title"),
+            elevation: 0.0,
+            backgroundColor: const Color(0x00000000).withOpacity(0.5),
+          ),
+          backgroundColor: Colors.transparent,
         ),
-        backgroundColor: Colors.transparent,
-      )),
+        looping: true,
+      ),
       betterPlayerDataSource: dataSource,
     );
 
     _betterPlayerController.addEventsListener((event) {
-      if (event.betterPlayerEventType == BetterPlayerEventType.FINISHED) {
-        print("Better player event: ${event.betterPlayerEventType}");
-        ///_betterPlayerController.play();
+      if (_counter > 0) {
+        if (event.betterPlayerEventType == BetterPlayerEventType.FINISHED) {
+          print(
+              "Better player event: ${event.betterPlayerEventType}, $_counter remaining");
+          // _betterPlayerController.setLooping(true);
+          //_decrementCounter();
+          setState(() {
+            _counter -= 1;
+          });
+          // if (_counter == 0) {
+          //   _betterPlayerController.pause();
+          //   // _betterPlayerController.setLooping(false);
+          // }
+        }
       }
     });
     return _betterPlayerController;
@@ -118,7 +132,11 @@ class _MyHomePageState extends State<MyHomePage> {
       //   child: Text("This is example default video. This video is loaded from"
       //       " URL. Subtitles are loaded from file."),
       // ),
-      _buildFileVideo()
+      _buildFileVideo(),
+      FloatingActionButton(
+        onPressed: null,
+        child: Text("$_counter"),
+      )
     ]);
   }
 
@@ -149,7 +167,8 @@ class _MyHomePageState extends State<MyHomePage> {
         } else {
           return AspectRatio(
             aspectRatio: 16 / 9,
-            child: BetterPlayer(
+            child: 
+            BetterPlayer(
               controller: _betterPlayerController,
             ),
           );
