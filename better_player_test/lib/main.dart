@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:better_player/better_player.dart';
+import 'package:better_player_test/playlist.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path_provider/path_provider.dart';
@@ -104,9 +105,9 @@ class _MyHomePageState extends State<MyHomePage> {
               "Better player event: ${event.betterPlayerEventType}, $_counter remaining");
           // _betterPlayerController.setLooping(true);
           //_decrementCounter();
-          setState(() {
-            _counter -= 1;
-          });
+          // setState(() {
+          //   _counter -= 1;
+          // });
           // if (_counter == 0) {
           //   _betterPlayerController.pause();
           //   // _betterPlayerController.setLooping(false);
@@ -133,6 +134,7 @@ class _MyHomePageState extends State<MyHomePage> {
       //       " URL. Subtitles are loaded from file."),
       // ),
       _buildFileVideo(),
+      RaisedButton(onPressed: () { MaterialPageRoute(builder: (context) => PlaylistPage());}),
       FloatingActionButton(
         onPressed: null,
         child: Text("$_counter"),
