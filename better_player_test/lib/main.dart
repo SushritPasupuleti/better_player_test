@@ -122,10 +122,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildFileVideo() {
-    return StreamBuilder<bool>(
-      stream: _fileVideoStreamController.stream,
-      builder: (context, snapshot) {
-        if (snapshot?.data == true) {
+    // return 
+    // StreamBuilder<bool>(
+    //   stream: _fileVideoStreamController.stream,
+    //   builder: (context, snapshot) {
+    //     if (snapshot?.data == true) {
           return FutureBuilder<BetterPlayerController>(
             future: _setupFileVideoData(),
             builder: (context, snapshot) {
@@ -141,11 +142,11 @@ class _MyHomePageState extends State<MyHomePage> {
               }
             },
           );
-        } else {
-          return const SizedBox();
-        }
-      },
-    );
+  //       } else {
+  //         return const SizedBox();
+  //       }
+  //     },
+  //   );
   }
 
   @override
