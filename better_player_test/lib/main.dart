@@ -82,10 +82,24 @@ class _MyHomePageState extends State<MyHomePage> {
       "${directory.path}/zawarudo.mp4",
     );
     _betterPlayerController = BetterPlayerController(
-      BetterPlayerConfiguration(),
+      BetterPlayerConfiguration(
+          overlay: Scaffold(
+        appBar: AppBar(
+          title: new Text("Video Title"),
+          elevation: 0.0,
+          backgroundColor: const Color(0x00000000).withOpacity(0.5),
+        ),
+        backgroundColor: Colors.transparent,
+      )),
       betterPlayerDataSource: dataSource,
     );
 
+    _betterPlayerController.addEventsListener((event) {
+      if (event.betterPlayerEventType == BetterPlayerEventType.FINISHED) {
+        print("Better player event: ${event.betterPlayerEventType}");
+        ///_betterPlayerController.play();
+      }
+    });
     return _betterPlayerController;
   }
 
@@ -122,31 +136,31 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Widget _buildFileVideo() {
-    // return 
+    // return
     // StreamBuilder<bool>(
     //   stream: _fileVideoStreamController.stream,
     //   builder: (context, snapshot) {
     //     if (snapshot?.data == true) {
-          return FutureBuilder<BetterPlayerController>(
-            future: _setupFileVideoData(),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return Center(child: CircularProgressIndicator());
-              } else {
-                return AspectRatio(
-                  aspectRatio: 16 / 9,
-                  child: BetterPlayer(
-                    controller: snapshot.data,
-                  ),
-                );
-              }
-            },
+    return FutureBuilder<BetterPlayerController>(
+      future: _setupFileVideoData(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return Center(child: CircularProgressIndicator());
+        } else {
+          return AspectRatio(
+            aspectRatio: 16 / 9,
+            child: BetterPlayer(
+              controller: _betterPlayerController,
+            ),
           );
-  //       } else {
-  //         return const SizedBox();
-  //       }
-  //     },
-  //   );
+        }
+      },
+    );
+    //       } else {
+    //         return const SizedBox();
+    //       }
+    //     },
+    //   );
   }
 
   @override
