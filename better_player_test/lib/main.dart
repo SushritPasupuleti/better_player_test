@@ -5,6 +5,7 @@ import 'package:better_player/better_player.dart';
 import 'package:better_player_test/playlist.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:path_provider/path_provider.dart';
 
 void main() {
@@ -33,7 +34,7 @@ class MyApp extends StatelessWidget {
         // closer together (more dense) than on mobile platforms.
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      home: MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: "Some Title"),
     );
   }
 }
@@ -62,17 +63,6 @@ class _MyHomePageState extends State<MyHomePage> {
   StreamController<bool> _fileVideoStreamController =
       StreamController.broadcast();
   bool _fileVideoShown = true;
-
-  void _decrementCounter() {
-    setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter--;
-    });
-  }
 
   Future<BetterPlayerController> _setupFileVideoData() async {
     await _saveAssetVideoToFile();
@@ -134,7 +124,7 @@ class _MyHomePageState extends State<MyHomePage> {
       //       " URL. Subtitles are loaded from file."),
       // ),
       _buildFileVideo(),
-      RaisedButton(onPressed: () { MaterialPageRoute(builder: (context) => PlaylistPage());}),
+      //RaisedButton(child: Text("Playlist"), onPressed: () { Navigator.push(context, MaterialPageRoute(builder: (context) => PlaylistPage()));}),
       FloatingActionButton(
         onPressed: null,
         child: Text("$_counter"),
@@ -190,3 +180,39 @@ class _MyHomePageState extends State<MyHomePage> {
     super.dispose();
   }
 }
+
+// class HomeSwiper extends StatefulWidget {
+//   HomeSwiper({Key key}) : super(key: key);
+
+//   @override
+//   _HomeSwiperState createState() => _HomeSwiperState();
+// }
+
+// class _HomeSwiperState extends State<HomeSwiper> {
+//   @override
+//   Widget build(BuildContext context) {
+//     return MaterialApp(
+//       title: "Video Title",
+//       home: Scaffold(
+//           backgroundColor: Colors.black,
+//           body: new Padding(
+//               padding: EdgeInsets.fromLTRB(0, 25, 0, 25),
+//               child: Swiper(
+//                 itemBuilder: (BuildContext context, int index) {
+//                   return new MyHomePage(title: "Some Title");
+//                 },
+//                 itemCount: 10,
+//                 viewportFraction: 0.8,
+//                 scale: 0.9,
+//                 pagination: new SwiperPagination(
+//                     builder: SwiperPagination.fraction,
+//                     margin: EdgeInsets.fromLTRB(0, 10, 0, 0)),
+//                 control: new SwiperControl(
+//                     iconNext: Icons.navigate_next_rounded,
+//                     iconPrevious: Icons.navigate_before_rounded,
+//                     size: 125),
+//                 loop: false,
+//               ))),
+//     );
+//   }
+// }
