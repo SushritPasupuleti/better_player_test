@@ -18,33 +18,22 @@ class _PlaylistPageState extends State<PlaylistPage> {
 
     final directory = await getApplicationDocumentsDirectory();
 
-    dataSourceList.add(
-      BetterPlayerDataSource(
-        BetterPlayerDataSourceType.FILE,
-        "${directory.path}/zawarudo.mp4",
-      ),
-    );
+    dataSourceList.add(BetterPlayerDataSource(
+        BetterPlayerDataSourceType.NETWORK,
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4"));
 
     dataSourceList.add(BetterPlayerDataSource(
-      BetterPlayerDataSourceType.FILE,
-      "${directory.path}/zawarudo.mp4",
-    ));
-    dataSourceList.add(
-      BetterPlayerDataSource(
-        BetterPlayerDataSourceType.FILE,
-        "${directory.path}/zawarudo.mp4",
-        //liveStream: true
-      ),
-    );
+        BetterPlayerDataSourceType.NETWORK,
+        "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4"));
 
     return dataSourceList;
   }
 
   Future _saveAssetToFile() async {
     String content =
-        await rootBundle.loadString("assets/zawarudo.mp4");
+        await rootBundle.loadString("assets/example_subtitles.srt");
     final directory = await getApplicationDocumentsDirectory();
-    var file = File("${directory.path}/zawarudo.mp4");
+    var file = File("${directory.path}/example_subtitles.srt");
     file.writeAsString(content);
   }
 
